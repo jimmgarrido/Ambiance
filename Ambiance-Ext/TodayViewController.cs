@@ -9,9 +9,6 @@ using System.Collections.Generic;
 using CoreGraphics;
 using Xamarin.Essentials;
 using System.Diagnostics;
-using Microcharts.iOS;
-using SkiaSharp;
-using Microcharts;
 using System.Linq;
 using AmbiantLibrary;
 
@@ -39,14 +36,15 @@ namespace AmbianceExt
 			//ExtensionContext.SetWidgetLargestAvailableDisplayMode(NCWidgetDisplayMode.Expanded);
 			LoadingIndicator.HidesWhenStopped = true;
 
-			TempLabel.Hidden = true;
-			InsideTempLabel.Hidden = true;
-			WindSpeedLabel.Hidden = true;
-			HumidityLabel.Hidden = true;
-			UVLabel.Hidden = true;
-			UpdatedLabel.Hidden = true;
-			ForcastHighLabel.Hidden = true;
-			ForcastLowLabel.Hidden = true;
+            //TempLabel.Hidden = true;
+            //InsideTempLabel.Hidden = true;
+            //WindSpeedLabel.Hidden = true;
+            //HumidityLabel.Hidden = true;
+            //UVLabel.Hidden = true;
+            //UpdatedLabel.Hidden = true;
+            //ForcastHighLabel.Hidden = true;
+            //ForcastLowLabel.Hidden = true;
+            MainInfoView.Hidden = true;
 
 			LoadingIndicator.StartAnimating();
 
@@ -68,13 +66,14 @@ namespace AmbianceExt
 
 			LoadingIndicator.StopAnimating();
 
-			TempLabel.Hidden = false;
-			InsideTempLabel.Hidden = false;
-			WindSpeedLabel.Hidden = false;
-			HumidityLabel.Hidden = false;
-			UVLabel.Hidden = false;
-			ForcastHighLabel.Hidden = false;
-			ForcastLowLabel.Hidden = false;
+            //TempLabel.Hidden = false;
+            //InsideTempLabel.Hidden = false;
+            //WindSpeedLabel.Hidden = false;
+            //HumidityLabel.Hidden = false;
+            //UVLabel.Hidden = false;
+            //ForcastHighLabel.Hidden = false;
+            //ForcastLowLabel.Hidden = false;
+            MainInfoView.Hidden = false;
 
 			//var settings = Foundation.NSUserDefaults.StandardUserDefaults;
 			//settings.SetString("Test1","LastUpdate");
