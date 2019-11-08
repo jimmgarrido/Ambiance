@@ -7,11 +7,17 @@
 using Foundation;
 using System.CodeDom.Compiler;
 
-namespace Ambiance_watch.WatchOSApp
+namespace Ambiance_watch.WatchOSExtension
 {
 	[Register ("MainInterfaceController")]
-	partial class MainInterfaceController
+	public partial class MainInterfaceController
 	{
+		[Outlet]
+		WatchKit.WKInterfaceTable DetailsTable { get; set; }
+
+		[Outlet]
+		WatchKit.WKInterfaceLabel ForcastLabel { get; set; }
+
 		[Outlet]
 		WatchKit.WKInterfaceLabel IndoorTempLabel { get; set; }
 
@@ -27,19 +33,37 @@ namespace Ambiance_watch.WatchOSApp
 		[Outlet]
 		WatchKit.WKInterfaceSwitch TheSwitch { get; set; }
 
+		[Outlet]
+		WatchKit.WKInterfaceLabel UpdatedAtLabel { get; set; }
+
 		[Action ("MyButtonPressed")]
 		partial void MyButtonPressed ();
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (DetailsTable != null) {
+				DetailsTable.Dispose ();
+				DetailsTable = null;
+			}
+
+			if (UpdatedAtLabel != null) {
+				UpdatedAtLabel.Dispose ();
+				UpdatedAtLabel = null;
+			}
+
+			if (ForcastLabel != null) {
+				ForcastLabel.Dispose ();
+				ForcastLabel = null;
+			}
+
+			if (IndoorTempLabel != null) {
+				IndoorTempLabel.Dispose ();
+				IndoorTempLabel = null;
+			}
+
 			if (MyLabel != null) {
 				MyLabel.Dispose ();
 				MyLabel = null;
-			}
-
-			if (TestButton != null) {
-				TestButton.Dispose ();
-				TestButton = null;
 			}
 
 			if (OutsideTempLabel != null) {
@@ -47,9 +71,9 @@ namespace Ambiance_watch.WatchOSApp
 				OutsideTempLabel = null;
 			}
 
-			if (IndoorTempLabel != null) {
-				IndoorTempLabel.Dispose ();
-				IndoorTempLabel = null;
+			if (TestButton != null) {
+				TestButton.Dispose ();
+				TestButton = null;
 			}
 
 			if (TheSwitch != null) {

@@ -5,27 +5,99 @@ using AmbiantLibrary;
 using Foundation;
 using WatchKit;
 
-namespace Ambiance_watch.WatchOSApp
+namespace Ambiance_watch.WatchOSExtension
 {
 	public partial class MainInterfaceController : WKInterfaceController
 	{
         bool enabled = false;
+        AmbiantClient client;
 
 		public MainInterfaceController (IntPtr handle) : base (handle)
 		{
 
 		}
 
-        public async override void Awake(NSObject context)
+        public override void Awake(NSObject context)
         {
             base.Awake(context);
 
-            var ambiant = new AmbiantClient();
-            var deviceData = await ambiant.GetDeviceDataAsync();
+            client = new AmbiantClient();
+            DetailsTable.SetNumberOfRows(3, "default");
+
+            UpdatedAtLabel.SetText("AWAKE");
+        }
+
+        public async override void WillActivate()
+        {
+            base.WillActivate();
+
+            var deviceData = await client.GetDeviceDataAsync();
+            var forecast = await client.GetForecastDataAsync();
 
             OutsideTempLabel.SetText($"{deviceData[0]?.LastData.OutdoorTemp.ToString()}°");
             IndoorTempLabel.SetText($"{deviceData[0]?.LastData.IndoorTemp.ToString()}° Inside");
+            ForcastLabel.SetText($"↑ {forecast.Daily.Data[0].TemperatureHigh.ToString("N0")}° ↓ {forecast.Daily.Data[0].TemperatureLow.ToString("N0")}°");
 
+            for(int i=0;i<3;i++)
+            {
+                var row = (DetailsRowController)DetailsTable.GetRowController(i);
+
+                if(i==0)
+                {
+                    row.TitleLabel.SetText("UV Index");
+                    row.DetailLabel.SetText($"{deviceData[0]?.LastData.UVIndex}");
+                }
+                else if (i == 1)
+                {
+                    row.TitleLabel.SetText("Humidity");
+                    row.DetailLabel.SetText($"{deviceData[0]?.LastData.Humidity}%");
+                }
+                else if (i == 2)
+                {
+                    row.TitleLabel.SetText("Wind");
+                    row.DetailLabel.SetText($"{deviceData[0]?.LastData.WindSpeed.ToString()}mph {GetWindDir(deviceData[0].LastData.WindDir)}");
+                }
+            }
+
+            UpdatedAtLabel.SetText("***");
+            UpdatedAtLabel.SetText(DateTime.Now.ToLongTimeString());
+
+        }
+
+        string GetIndexRating(int index)
+        {
+            if (index == 1 || index == 2)
+                return "Low";
+            else if (index >= 3 && index <= 5)
+                return "Moderate";
+            else if (index == 6 || index == 7)
+                return "High";
+            else if (index >= 8 && index <= 10)
+                return "Very High";
+            else if (index >= 11)
+                return "Extreme";
+            else
+                return "None";
+        }
+
+        string GetWindDir(double heading)
+        {
+            if ((heading >= 330 && heading <= 359) || (heading >= 0 && heading < 30))
+                return "N";
+            else if (heading >= 30 && heading < 60)
+                return "NE";
+            else if (heading >= 60 && heading < 120)
+                return "E";
+            else if (heading >= 120 && heading < 150)
+                return "SE";
+            else if (heading >= 150 && heading < 210)
+                return "S";
+            else if (heading >= 210 && heading < 240)
+                return "SW";
+            else if (heading >= 240 && heading < 300)
+                return "W";
+            else
+                return "Nw";
         }
 
         partial void MyButtonPressed()
