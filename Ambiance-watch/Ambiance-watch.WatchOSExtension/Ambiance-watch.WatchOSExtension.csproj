@@ -96,10 +96,14 @@
       <DependentUpon>NotificationController.cs</DependentUpon>
     </Compile>
     <Compile Include="MainInterfaceController.cs" />
-    <Compile Include="../Ambiance-watch.WatchOSApp/MainInterfaceController.designer.cs">
+    <Compile Include="MainInterfaceController.designer.cs">
       <DependentUpon>MainInterfaceController.cs</DependentUpon>
     </Compile>
     <Compile Include="ComplicationController.cs" />
+    <Compile Include="DetailsRowController.cs" />
+    <Compile Include="DetailsRowController.designer.cs">
+        <DependentUpon>DetailsRowController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="PushNotificationPayload.json" />

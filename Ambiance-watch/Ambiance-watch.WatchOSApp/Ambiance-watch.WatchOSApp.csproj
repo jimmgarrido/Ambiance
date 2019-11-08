@@ -139,10 +139,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NotificationController.cs" />
-    <Compile Include="NotificationController.designer.cs">
-      <DependentUpon>NotificationController.cs</DependentUpon>
-    </Compile>
+    <BundleResource Include="Resources\.DS_Store" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\WatchOS\Xamarin.WatchOS.App.CSharp.targets" />
 </Project>

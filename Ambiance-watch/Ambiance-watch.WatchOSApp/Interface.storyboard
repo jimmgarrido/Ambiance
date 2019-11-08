@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="15505" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
-    <device id="watch38"/>
+    <device id="watch40"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="15501"/>
@@ -11,16 +11,48 @@
             <objects>
                 <controller id="AgC-eL-Hgc" customClass="MainInterfaceController">
                     <items>
-                        <label alignment="left" text="60" id="tAX-Ca-Hg0">
-                            <fontDescription key="font" style="UICTFontTextStyleTitle1"/>
-                        </label>
-                        <label alignment="left" text="60 Inside" id="fk6-KM-hiF">
+                        <group width="1" alignment="left" spacing="5" id="5BE-x2-4zu">
+                            <items>
+                                <label alignment="left" verticalAlignment="bottom" text="60°" id="tAX-Ca-Hg0">
+                                    <fontDescription key="font" style="UICTFontTextStyleTitle1"/>
+                                </label>
+                                <label height="30" alignment="left" verticalAlignment="bottom" text="↑ 75° ↓ 48°" id="fVW-zX-12I">
+                                    <fontDescription key="font" style="UICTFontTextStyleBody"/>
+                                </label>
+                            </items>
+                        </group>
+                        <label alignment="left" text="60 Inside" textAlignment="left" id="fk6-KM-hiF">
                             <fontDescription key="font" style="UICTFontTextStyleTitle3"/>
+                        </label>
+                        <table alignment="left" id="oc7-Ug-6Vd">
+                            <items>
+                                <tableRow id="diM-nF-xCa" customClass="DetailsRowController">
+                                    <group key="rootItem" width="1" alignment="left" id="RXL-0h-qOx">
+                                        <items>
+                                            <label width="0.5" alignment="left" verticalAlignment="center" text="Humidity" id="2Rx-Mi-7Ch"/>
+                                            <label width="0.5" alignment="left" verticalAlignment="center" text="0mph NNW" textAlignment="right" id="3nu-bk-JNj"/>
+                                        </items>
+                                    </group>
+                                    <connections>
+                                        <outlet property="DetailLabel" destination="3nu-bk-JNj" id="p2C-vA-KRU"/>
+                                        <outlet property="TitleLabel" destination="2Rx-Mi-7Ch" id="PEW-xu-B7U"/>
+                                    </connections>
+                                </tableRow>
+                                <tableRow id="y7e-11-mzu">
+                                    <group key="rootItem" width="1" alignment="left" id="tOM-p4-XRQ"/>
+                                </tableRow>
+                            </items>
+                        </table>
+                        <label alignment="left" text="Label" id="BqW-b7-cV6">
+                            <fontDescription key="font" style="UICTFontTextStyleFootnote"/>
                         </label>
                     </items>
                     <connections>
+                        <outlet property="DetailsTable" destination="oc7-Ug-6Vd" id="4SM-TP-afg"/>
+                        <outlet property="ForcastLabel" destination="fVW-zX-12I" id="sWS-vT-XK7"/>
                         <outlet property="IndoorTempLabel" destination="fk6-KM-hiF" id="UgF-O8-qnX"/>
                         <outlet property="OutsideTempLabel" destination="tAX-Ca-Hg0" id="YZo-eO-r0y"/>
+                        <outlet property="UpdatedAtLabel" destination="BqW-b7-cV6" id="D71-LQ-0SZ"/>
                     </connections>
                 </controller>
             </objects>
