@@ -71,9 +71,10 @@
     <MtouchFloat32>true</MtouchFloat32>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchLink>SdkOnly</MtouchLink>
-    <MtouchArch>ARMv7k</MtouchArch>
+    <MtouchArch>ARM64_32</MtouchArch>
     <IOSDebugOverWiFi>true</IOSDebugOverWiFi>
     <IOSDebuggerPort>10001</IOSDebuggerPort>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -90,17 +91,36 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExtensionDelegate.cs" />
-    <Compile Include="InterfaceController.cs" />
-    <Compile Include="InterfaceController.designer.cs">
-      <DependentUpon>InterfaceController.cs</DependentUpon>
-    </Compile>
     <Compile Include="NotificationController.cs" />
     <Compile Include="NotificationController.designer.cs">
       <DependentUpon>NotificationController.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainInterfaceController.cs" />
+    <Compile Include="../Ambiance-watch.WatchOSApp/MainInterfaceController.designer.cs">
+      <DependentUpon>MainInterfaceController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ComplicationController.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="PushNotificationPayload.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\AmbiantLibrary\AmbiantLibrary.csproj">
+      <Project>{104D9402-5E4F-452C-8CF3-820D1B7A348F}</Project>
+      <Name>AmbiantLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.2</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Media.xcassets\Contents.json" />
+    <ImageAsset Include="Media.xcassets\Image.imageset\Contents.json" />
+    <ImageAsset Include="Media.xcassets\Image.imageset\Comp58.png" />
+    <ImageAsset Include="Media.xcassets\Image.imageset\Comp58-1.png" />
+    <ImageAsset Include="Media.xcassets\Image.imageset\Comp58-2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\WatchOS\Xamarin.WatchOS.AppExtension.CSharp.targets" />
 </Project>

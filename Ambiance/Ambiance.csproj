@@ -113,6 +113,9 @@
         <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon40-1.png" />
         <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon58-1.png" />
         <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon87-1.png" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon80.png" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon100.png" />
+        <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon88.png" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Resources\" />
@@ -139,6 +142,11 @@
         <IsAppExtension>true</IsAppExtension>
         <Project>{16C79F53-5131-4C76-8EC4-3DFB3D92875F}</Project>
         <Name>Ambiance-Ext</Name>
+      </ProjectReference>
+      <ProjectReference Include="..\Ambiance-watch\Ambiance-watch.WatchOSApp\Ambiance-watch.WatchOSApp.csproj">
+        <IsWatchApp>true</IsWatchApp>
+        <Project>{9051B2C3-7F45-4F07-B40C-8D5A03B03B8C}</Project>
+        <Name>Ambiance-watch.WatchOSApp</Name>
       </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
