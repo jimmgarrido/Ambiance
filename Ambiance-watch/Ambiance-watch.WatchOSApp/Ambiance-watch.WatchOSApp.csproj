@@ -75,6 +75,11 @@
     <MtouchArch>ARMv7k</MtouchArch>
     <IOSDebugOverWiFi>true</IOSDebugOverWiFi>
     <IOSDebuggerPort>10001</IOSDebuggerPort>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Notification' ">
+    <WatchKitExecutionMode>Notification</WatchKitExecutionMode>
+    <NotificationPayload>..\Ambiance-watch.WatchOSExtension\PushNotificationPayload.json</NotificationPayload>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -113,6 +118,8 @@
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon88.png">
       <Visible>false</Visible>
     </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon88-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon100.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -125,11 +132,17 @@
     <InterfaceDefinition Include="Interface.storyboard" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ambiance_watch.WatchOSExtension\Ambiance_watch.WatchOSExtension.csproj">
-      <Name>Ambiance_watch.WatchOSExtension</Name>
-      <Project>{9F743938-8AFB-432F-A974-861B6F14EE7D}</Project>
-      <IsAppExtension>True</IsAppExtension>
+    <ProjectReference Include="..\Ambiance-watch.WatchOSExtension\Ambiance-watch.WatchOSExtension.csproj">
+      <IsAppExtension>true</IsAppExtension>
+      <Project>{47B863B9-10FB-494F-A950-59B0AF53D95C}</Project>
+      <Name>Ambiance-watch.WatchOSExtension</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="NotificationController.cs" />
+    <Compile Include="NotificationController.designer.cs">
+      <DependentUpon>NotificationController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\WatchOS\Xamarin.WatchOS.App.CSharp.targets" />
 </Project>

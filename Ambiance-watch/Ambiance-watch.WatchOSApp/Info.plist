@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>Ambiance_watch.WatchOSApp</string>
+	<string>Ambiance</string>
 	<key>CFBundleDisplayName</key>
 	<string>Ambiance_watch.WatchOSApp</string>
 	<key>CFBundleIdentifier</key>
@@ -26,6 +26,6 @@
 	<key>WKWatchKitApp</key>
 	<true/>
 	<key>XSAppIconAssets</key>
-	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
+	<string>Assets.xcassets/AppIcon.appiconset</string>
 </dict>
 </plist>
