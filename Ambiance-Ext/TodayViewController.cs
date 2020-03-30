@@ -7,7 +7,6 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using CoreGraphics;
-using Xamarin.Essentials;
 using System.Diagnostics;
 using System.Linq;
 using AmbiantLibrary;
@@ -51,11 +50,14 @@ namespace AmbianceExt
 			var ambiant = new AmbiantClient();
 			var deviceData = await ambiant.GetDeviceDataAsync();
 
-			TempLabel.Text = $"{deviceData[0]?.LastData.OutdoorTemp.ToString()}°";
-			InsideTempLabel.Text = $"{deviceData[0]?.LastData.IndoorTemp.ToString()}° Inside";
-			WindSpeedLabel.Text = $"{deviceData[0]?.LastData.WindSpeed.ToString()}mph {GetWindDir(deviceData[0].LastData.WindDir)}";
-			HumidityLabel.Text = $"{deviceData[0]?.LastData.Humidity}%";
-			UVLabel.Text = $"{deviceData[0]?.LastData.UVIndex} {GetIndexRating(deviceData[0].LastData.UVIndex)}";
+			if(deviceData.Count > 0)
+            {
+				TempLabel.Text = $"{deviceData[0]?.LastData.OutdoorTemp.ToString()}°";
+				InsideTempLabel.Text = $"{deviceData[0]?.LastData.IndoorTemp.ToString()}° Inside";
+				WindSpeedLabel.Text = $"{deviceData[0]?.LastData.WindSpeed.ToString()}mph {GetWindDir(deviceData[0].LastData.WindDir)}";
+				HumidityLabel.Text = $"{deviceData[0]?.LastData.Humidity}%";
+				UVLabel.Text = $"{deviceData[0]?.LastData.UVIndex} {GetIndexRating(deviceData[0].LastData.UVIndex)}";
+			}
 
 			UpdatedLabel.Text = $"Updated {deviceData[0]?.LastData.Date.ToLocalTime().ToShortTimeString()}";
 
