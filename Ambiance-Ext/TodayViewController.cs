@@ -10,11 +10,26 @@ using CoreGraphics;
 using System.Diagnostics;
 using System.Linq;
 using AmbiantLibrary;
+using System.Threading.Tasks;
 
 namespace AmbianceExt
 {
 	public partial class TodayViewController : UIViewController, INCWidgetProviding
 	{
+		const string outdoorTempKey = "OutdoorTemp";
+		const string indoorTempKey = "IndoorTemp";
+		const string windSpeedKey = "WindSpeed";
+		const string humidityKey = "Humidity";
+		const string uvIndexKey = "UVIndex";
+		const string forecastHighKey = "ForecastHigh";
+		const string forecastLowKey = "ForecastHigh";
+		const string lastDeviceUpdateTimeKey = "LastDeviceUpdateTime";
+		const string lastForecastUpdateTimeKey = "LastForecastUpdateTime";
+		const string prevUpdateSuccessfulKey = "prevUpdateSuccessful";
+
+		NSUserDefaults userStore = NSUserDefaults.StandardUserDefaults;
+		AmbiantClient amClient = new AmbiantClient();
+
 		protected TodayViewController(IntPtr handle) : base(handle)
 		{
 			// Note: this .ctor should not contain any initialization logic.
@@ -28,146 +43,75 @@ namespace AmbianceExt
 			// Release any cached data, images, etc that aren't in use.
 		}
 
-		public async override void ViewDidLoad()
+		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
-			//ExtensionContext.SetWidgetLargestAvailableDisplayMode(NCWidgetDisplayMode.Expanded);
-			LoadingIndicator.HidesWhenStopped = true;
+            //ExtensionContext.SetWidgetLargestAvailableDisplayMode(NCWidgetDisplayMode.Expanded);
+            LoadingIndicator.HidesWhenStopped = true;
 
-            //TempLabel.Hidden = true;
-            //InsideTempLabel.Hidden = true;
-            //WindSpeedLabel.Hidden = true;
-            //HumidityLabel.Hidden = true;
-            //UVLabel.Hidden = true;
-            //UpdatedLabel.Hidden = true;
-            //ForcastHighLabel.Hidden = true;
-            //ForcastLowLabel.Hidden = true;
-            MainInfoView.Hidden = true;
+            //MainInfoView.Hidden = true;
 
-			LoadingIndicator.StartAnimating();
+            //LoadingIndicator.StartAnimating();
 
-			var ambiant = new AmbiantClient();
-			var deviceData = await ambiant.GetDeviceDataAsync();
+            
 
-			if(deviceData.Count > 0)
-            {
-				TempLabel.Text = $"{deviceData[0]?.LastData.OutdoorTemp.ToString()}°";
-				InsideTempLabel.Text = $"{deviceData[0]?.LastData.IndoorTemp.ToString()}° Inside";
-				WindSpeedLabel.Text = $"{deviceData[0]?.LastData.WindSpeed.ToString()}mph {GetWindDir(deviceData[0].LastData.WindDir)}";
-				HumidityLabel.Text = $"{deviceData[0]?.LastData.Humidity}%";
-				UVLabel.Text = $"{deviceData[0]?.LastData.UVIndex} {GetIndexRating(deviceData[0].LastData.UVIndex)}";
-			}
+            //MainInfoView.Hidden = false;
 
-			UpdatedLabel.Text = $"Updated {deviceData[0]?.LastData.Date.ToLocalTime().ToShortTimeString()}";
-
-			var forecast = await ambiant.GetForecastDataAsync();
-
-			ForcastHighLabel.Text = $"↑ {forecast.Daily.Data[0].TemperatureHigh.ToString("N0")}°";
-			ForcastLowLabel.Text = $"↓ {forecast.Daily.Data[0].TemperatureLow.ToString("N0")}°";
-
-			LoadingIndicator.StopAnimating();
-
-            //TempLabel.Hidden = false;
-            //InsideTempLabel.Hidden = false;
-            //WindSpeedLabel.Hidden = false;
-            //HumidityLabel.Hidden = false;
-            //UVLabel.Hidden = false;
-            //ForcastHighLabel.Hidden = false;
-            //ForcastLowLabel.Hidden = false;
-            MainInfoView.Hidden = false;
-
-			//var settings = Foundation.NSUserDefaults.StandardUserDefaults;
-			//settings.SetString("Test1","LastUpdate");
-			//Debug.WriteLine("Data");
-
-			//var newJson = await client.GetStringAsync("https://api.ambientweather.net/v1/devices/EC:FA:BC:07:CE:60?apiKey=96ad32e3abe24089b1f509eae38fabf1c633e693816947d187521d3eae9b368a&applicationKey=ac5b0e1a59374538b2618a6ebcd1479ac71c7b34c69b4ea29ed3cbab29a57a67&limit=50");
-
-			//var historyJson = JsonConvert.DeserializeObject<List<WeatherInfo>>(newJson);
-
-			//var outdoorTemps = new List<Entry>();
-			////var outdoorTemps = historyJson.Select(t => t.OutdoorTemp);
-
-			//foreach(var d in historyJson)
-			//{
-			//	outdoorTemps.Add(new Entry((float)d.OutdoorTemp));
-			//}
-
-
-			//var entries = new[]
-			// {
-			//	 new Entry(212)
-			//	 {
-			//		 Label = "UWP",
-			//		 ValueLabel = "212",
-			//		 Color = SKColor.Parse("#2c3e50")
-			//	 },
-			//	 new Entry(248)
-			//	 {
-			//		 Label = "Android",
-			//		 ValueLabel = "248",
-			//		 Color = SKColor.Parse("#77d065")
-			//	 },
-			//	 new Entry(128)
-			//	 {
-			//		 Label = "iOS",
-			//		 ValueLabel = "128",
-			//		 Color = SKColor.Parse("#b455b6")
-			//	 },
-			//	 new Entry(514)
-			//	 {
-			//		 Label = "Shared",
-			//		 ValueLabel = "514",
-			//		 Color = SKColor.Parse("#3498db")
-			//} };
-
-			//var test = new LineChart() {
-			//	Entries = outdoorTemps,
-			//	MinValue = 80
-			//};
-			//var chart = new ChartView()
-			//{
-			//	Frame = new CGRect(0, 115, View.Bounds.Width, 140)
-			//};
-			//View.AddSubview(chart);
-		}
+        }
 
 		[Export("widgetPerformUpdateWithCompletionHandler:")]
 		public void WidgetPerformUpdate(Action<NCUpdateResult> completionHandler)
 		{
-			// Perform any setup necessary in order to update the view.
-
 			// If an error is encoutered, use NCUpdateResultFailed
 			// If there's no update required, use NCUpdateResultNoData
 			// If there's an update, use NCUpdateResultNewData
 
-			var setting = NSUserDefaults.StandardUserDefaults.StringForKey("LastUpdate");
-			Debug.WriteLine($"*****{setting}*****");
-			//DateTime lastTime;
+			
+			// This method is called by iOS at 1) undetmerined intevals when the widget is
+			// in the background and 2) when the widget is loaded on the Today View. Newer
+			// data is retieved here and then saved in the app's user store.
 
-			//if(setting != null)
-			//{
-			//	if(DateTime.TryParse(setting, out lastTime))
-			//	{
-			//		var test = lastTime.AddMinutes(2);
-			//		if(lastTime.AddMinutes(2) >= DateTime.UtcNow)
-			//		{
-			//			completionHandler(NCUpdateResult.NoData);
-			//			Debug.WriteLine("NoData");
-			//		}
-			//		else
-			//		{
-			//			completionHandler(NCUpdateResult.NewData);
-			//		}
-			//	}
-			//}
-			//else
-			//{
-			//	completionHandler(NCUpdateResult.NewData);
-			//	Debug.WriteLine("Refresh");
-			//}
 
-			completionHandler(NCUpdateResult.NewData);
+			var lastDeviceUpdateTime = userStore.StringForKey(lastDeviceUpdateTimeKey);
+			var lastForecastUpdateTime = userStore.StringForKey(lastForecastUpdateTimeKey);
+			var prevUpdateSuccessful = userStore.BoolForKey(prevUpdateSuccessfulKey);
+			var updatedData = false;
+
+			if (string.IsNullOrEmpty(lastDeviceUpdateTime) || string.IsNullOrEmpty(lastForecastUpdateTime) || !prevUpdateSuccessful)
+			{
+				UpdateDeviceData();
+				UpdateForecastData();
+				updatedData = true;
+				Debug.WriteLine("Update all data");
+			}
+            else
+            {
+                if (DateTime.TryParse(lastDeviceUpdateTime, out DateTime lastDeviceUpdate))
+                {
+					if (lastDeviceUpdate.AddMinutes(1) < DateTime.UtcNow)
+					{
+						UpdateDeviceData();
+						updatedData = true;
+						Debug.WriteLine("Updated Device Data");
+					}
+				}
+
+				if(DateTime.TryParse(lastForecastUpdateTime, out DateTime lastForecaseUpdate))
+                {
+					if (lastForecaseUpdate.AddHours(1) < DateTime.UtcNow)
+					{
+						UpdateForecastData();
+						updatedData = true;
+						Debug.WriteLine("Updated forecast data");
+					}
+				}
+            }
+
+			if (updatedData)
+				completionHandler(NCUpdateResult.NewData);
+			else
+				completionHandler(NCUpdateResult.NoData);
 		}
 
 		//[Export("widgetActiveDisplayModeDidChange:withMaximumSize:")]
@@ -177,6 +121,65 @@ namespace AmbianceExt
 		//		PreferredContentSize = maxSize;
 		//	else if (activeDisplayMode == NCWidgetDisplayMode.Expanded)
 		//		PreferredContentSize = new CGSize(maxSize.Width, maxSize.Height-100);
+		//}
+
+		async void UpdateDeviceData()
+        {
+			var deviceData = await amClient.GetDeviceDataAsync();
+
+			if (deviceData.Count > 0)
+			{
+				var data = deviceData[0].LastData;
+
+				userStore.SetString(data.OutdoorTemp.ToString(), outdoorTempKey);
+				userStore.SetString(data.IndoorTemp.ToString(), indoorTempKey);
+				userStore.SetString(data.WindSpeed.ToString(), windSpeedKey);
+				userStore.SetString(data.Humidity.ToString(), humidityKey);
+				userStore.SetString(data.UVIndex.ToString(), uvIndexKey);
+
+				userStore.SetString(DateTime.UtcNow.ToString(), lastDeviceUpdateTimeKey);
+				userStore.SetBool(true, prevUpdateSuccessfulKey);
+			}
+			else
+            {
+				userStore.SetBool(false, prevUpdateSuccessfulKey);
+			}
+		}
+
+		async void UpdateForecastData()
+        {
+			var forecastData = await amClient.GetForecastDataAsync();
+
+			if (forecastData.Daily != null)
+			{
+				var forecast = forecastData.Daily.Data[0];
+
+				userStore.SetString(forecast.TemperatureHigh.ToString("N0"), forecastHighKey);
+				userStore.SetString(forecast.TemperatureLow.ToString("N)"), forecastLowKey);
+
+				userStore.SetString(DateTime.UtcNow.ToString(), lastForecastUpdateTimeKey);
+				userStore.SetBool(true, prevUpdateSuccessfulKey);
+			}
+			else
+			{
+				userStore.SetBool(false, prevUpdateSuccessfulKey);
+			}
+		}
+
+		//void UpdateWidgetUI()
+  //      {
+		//	TempLabel.Text = $"{deviceData[0]?.LastData.OutdoorTemp.ToString()}°";
+		//	InsideTempLabel.Text = $"{deviceData[0]?.LastData.IndoorTemp.ToString()}° Inside";
+		//	WindSpeedLabel.Text = $"{deviceData[0]?.LastData.WindSpeed.ToString()}mph {GetWindDir(deviceData[0].LastData.WindDir)}";
+		//	HumidityLabel.Text = $"{deviceData[0]?.LastData.Humidity}%";
+		//	UVLabel.Text = $"{deviceData[0]?.LastData.UVIndex} {GetIndexRating(deviceData[0].LastData.UVIndex)}";
+
+		//	UpdatedLabel.Text = $"Updated {deviceData[0]?.LastData.Date.ToLocalTime().ToShortTimeString()}";
+
+		//	ForcastHighLabel.Text = $"↑ {forecast.Daily.Data[0].TemperatureHigh.ToString("N0")}°";
+		//	ForcastLowLabel.Text = $"↓ {forecast.Daily.Data[0].TemperatureLow.ToString("N0")}°";
+
+		//	LoadingIndicator.StopAnimating();
 		//}
 
 		string GetWindDir(double heading)
