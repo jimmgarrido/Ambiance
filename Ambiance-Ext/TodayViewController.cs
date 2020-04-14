@@ -1,16 +1,10 @@
 ﻿using System;
-
-using NotificationCenter;
-using Foundation;
-using UIKit;
-using System.Net.Http;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using CoreGraphics;
 using System.Diagnostics;
-using System.Linq;
-using AmbiantLibrary;
 using System.Threading.Tasks;
+using AmbiantLibrary;
+using Foundation;
+using NotificationCenter;
+using UIKit;
 
 namespace AmbianceExt
 {
@@ -30,17 +24,11 @@ namespace AmbianceExt
 		NSUserDefaults userStore = NSUserDefaults.StandardUserDefaults;
 		AmbiantClient amClient = new AmbiantClient();
 
-		protected TodayViewController(IntPtr handle) : base(handle)
-		{
-			// Note: this .ctor should not contain any initialization logic.
-		}
+		protected TodayViewController(IntPtr handle) : base(handle) { }
 
 		public override void DidReceiveMemoryWarning()
 		{
-			// Releases the view if it doesn't have a superview.
 			base.DidReceiveMemoryWarning();
-
-			// Release any cached data, images, etc that aren't in use.
 		}
 
 		public override void ViewDidLoad()
@@ -56,11 +44,6 @@ namespace AmbianceExt
 		[Export("widgetPerformUpdateWithCompletionHandler:")]
 		public async void WidgetPerformUpdate(Action<NCUpdateResult> completionHandler)
 		{
-			// If an error is encoutered, use NCUpdateResultFailed
-			// If there's no update required, use NCUpdateResultNoData
-			// If there's an update, use NCUpdateResultNewData
-
-			
 			// This method is called by iOS at 1) undetmerined intevals when the widget is
 			// in the background and 2) when the widget is loaded on the Today View. Newer
 			// data is retieved here and then saved in the app's user store.
@@ -182,7 +165,7 @@ namespace AmbianceExt
             ForcastLowLabel.Text = $"↓ {forecastLow}°";
         }
 
-        string GetWindDir(int heading)
+		string GetWindDir(int heading)
 		{
 			if ((heading >= 330 && heading <= 359) || (heading >= 0 && heading < 30))
 				return "N";
