@@ -22,7 +22,7 @@ namespace AmbianceExt
 		const string humidityKey = "Humidity";
 		const string uvIndexKey = "UVIndex";
 		const string forecastHighKey = "ForecastHigh";
-		const string forecastLowKey = "ForecastHigh";
+		const string forecastLowKey = "ForecastLow";
 		const string lastDeviceUpdateTimeKey = "LastDeviceUpdateTime";
 		const string lastForecastUpdateTimeKey = "LastForecastUpdateTime";
 		const string prevUpdateSuccessfulKey = "prevUpdateSuccessful";
@@ -50,18 +50,11 @@ namespace AmbianceExt
             //ExtensionContext.SetWidgetLargestAvailableDisplayMode(NCWidgetDisplayMode.Expanded);
             LoadingIndicator.HidesWhenStopped = true;
 
-            //MainInfoView.Hidden = true;
-
-            //LoadingIndicator.StartAnimating();
-
-            
-
-            //MainInfoView.Hidden = false;
-
+			UpdateWidgetUI();
         }
 
 		[Export("widgetPerformUpdateWithCompletionHandler:")]
-		public void WidgetPerformUpdate(Action<NCUpdateResult> completionHandler)
+		public async void WidgetPerformUpdate(Action<NCUpdateResult> completionHandler)
 		{
 			// If an error is encoutered, use NCUpdateResultFailed
 			// If there's no update required, use NCUpdateResultNoData
@@ -80,18 +73,18 @@ namespace AmbianceExt
 
 			if (string.IsNullOrEmpty(lastDeviceUpdateTime) || string.IsNullOrEmpty(lastForecastUpdateTime) || !prevUpdateSuccessful)
 			{
-				UpdateDeviceData();
-				UpdateForecastData();
+				await UpdateDeviceData();
+				await UpdateForecastData();
 				updatedData = true;
 				Debug.WriteLine("Update all data");
 			}
-            else
+			else
             {
                 if (DateTime.TryParse(lastDeviceUpdateTime, out DateTime lastDeviceUpdate))
                 {
 					if (lastDeviceUpdate.AddMinutes(1) < DateTime.UtcNow)
 					{
-						UpdateDeviceData();
+						await UpdateDeviceData();
 						updatedData = true;
 						Debug.WriteLine("Updated Device Data");
 					}
@@ -99,9 +92,9 @@ namespace AmbianceExt
 
 				if(DateTime.TryParse(lastForecastUpdateTime, out DateTime lastForecaseUpdate))
                 {
-					if (lastForecaseUpdate.AddHours(1) < DateTime.UtcNow)
+					if (lastForecaseUpdate.AddMinutes(30) < DateTime.UtcNow)
 					{
-						UpdateForecastData();
+						await UpdateForecastData();
 						updatedData = true;
 						Debug.WriteLine("Updated forecast data");
 					}
@@ -109,7 +102,10 @@ namespace AmbianceExt
             }
 
 			if (updatedData)
+			{
+				UpdateWidgetUI();
 				completionHandler(NCUpdateResult.NewData);
+			}
 			else
 				completionHandler(NCUpdateResult.NoData);
 		}
@@ -123,7 +119,7 @@ namespace AmbianceExt
 		//		PreferredContentSize = new CGSize(maxSize.Width, maxSize.Height-100);
 		//}
 
-		async void UpdateDeviceData()
+		async Task UpdateDeviceData()
         {
 			var deviceData = await amClient.GetDeviceDataAsync();
 
@@ -133,9 +129,9 @@ namespace AmbianceExt
 
 				userStore.SetString(data.OutdoorTemp.ToString(), outdoorTempKey);
 				userStore.SetString(data.IndoorTemp.ToString(), indoorTempKey);
-				userStore.SetString(data.WindSpeed.ToString(), windSpeedKey);
+				userStore.SetString($"{data.WindSpeed}mph {GetWindDir(data.WindDir)}", windSpeedKey);
 				userStore.SetString(data.Humidity.ToString(), humidityKey);
-				userStore.SetString(data.UVIndex.ToString(), uvIndexKey);
+				userStore.SetString($"{data.UVIndex} {GetIndexRating(data.UVIndex)}", uvIndexKey);
 
 				userStore.SetString(DateTime.UtcNow.ToString(), lastDeviceUpdateTimeKey);
 				userStore.SetBool(true, prevUpdateSuccessfulKey);
@@ -146,7 +142,7 @@ namespace AmbianceExt
 			}
 		}
 
-		async void UpdateForecastData()
+		async Task UpdateForecastData()
         {
 			var forecastData = await amClient.GetForecastDataAsync();
 
@@ -155,7 +151,7 @@ namespace AmbianceExt
 				var forecast = forecastData.Daily.Data[0];
 
 				userStore.SetString(forecast.TemperatureHigh.ToString("N0"), forecastHighKey);
-				userStore.SetString(forecast.TemperatureLow.ToString("N)"), forecastLowKey);
+				userStore.SetString(forecast.TemperatureLow.ToString("N0"), forecastLowKey);
 
 				userStore.SetString(DateTime.UtcNow.ToString(), lastForecastUpdateTimeKey);
 				userStore.SetBool(true, prevUpdateSuccessfulKey);
@@ -166,23 +162,27 @@ namespace AmbianceExt
 			}
 		}
 
-		//void UpdateWidgetUI()
-  //      {
-		//	TempLabel.Text = $"{deviceData[0]?.LastData.OutdoorTemp.ToString()}°";
-		//	InsideTempLabel.Text = $"{deviceData[0]?.LastData.IndoorTemp.ToString()}° Inside";
-		//	WindSpeedLabel.Text = $"{deviceData[0]?.LastData.WindSpeed.ToString()}mph {GetWindDir(deviceData[0].LastData.WindDir)}";
-		//	HumidityLabel.Text = $"{deviceData[0]?.LastData.Humidity}%";
-		//	UVLabel.Text = $"{deviceData[0]?.LastData.UVIndex} {GetIndexRating(deviceData[0].LastData.UVIndex)}";
+        void UpdateWidgetUI()
+		{
+			var outdoorTemp = userStore.StringForKey(outdoorTempKey);
+			var indoorTemp = userStore.StringForKey(indoorTempKey);
+			var windSpeed = userStore.StringForKey(windSpeedKey);
+			var humidity = userStore.StringForKey(humidityKey);
+			var uvIndex = userStore.StringForKey(uvIndexKey);
+			var forecastHigh = userStore.StringForKey(forecastHighKey);
+			var forecastLow = userStore.StringForKey(forecastLowKey);
 
-		//	UpdatedLabel.Text = $"Updated {deviceData[0]?.LastData.Date.ToLocalTime().ToShortTimeString()}";
+			TempLabel.Text = $"{outdoorTemp}°";
+            InsideTempLabel.Text = $"{indoorTemp}° Inside";
+            WindSpeedLabel.Text = $"{windSpeed}";
+            HumidityLabel.Text = $"{humidity}%";
+            UVLabel.Text = $"{uvIndex}";
 
-		//	ForcastHighLabel.Text = $"↑ {forecast.Daily.Data[0].TemperatureHigh.ToString("N0")}°";
-		//	ForcastLowLabel.Text = $"↓ {forecast.Daily.Data[0].TemperatureLow.ToString("N0")}°";
+            ForcastHighLabel.Text = $"↑ {forecastHigh}°";
+            ForcastLowLabel.Text = $"↓ {forecastLow}°";
+        }
 
-		//	LoadingIndicator.StopAnimating();
-		//}
-
-		string GetWindDir(double heading)
+        string GetWindDir(int heading)
 		{
 			if ((heading >= 330 && heading <= 359) || (heading >= 0 && heading < 30))
 				return "N";
