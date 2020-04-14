@@ -1,5 +1,6 @@
 using System;
 using AmbiantLibrary;
+using ClockKit;
 using Foundation;
 using WatchKit;
 
@@ -59,6 +60,11 @@ namespace Ambiance_watch.WatchOSExtension
 
             UpdatedAtLabel.SetText("***");
             UpdatedAtLabel.SetText(DateTime.Now.ToLongTimeString());
+
+            if (CLKComplicationServer.SharedInstance.ActiveComplications.Length > 0)
+            {
+                CLKComplicationServer.SharedInstance.ReloadTimeline(CLKComplicationServer.SharedInstance.ActiveComplications[0]);
+            }
 
         }
 
