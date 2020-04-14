@@ -112,9 +112,9 @@ namespace AmbianceExt
 
 				userStore.SetString(data.OutdoorTemp.ToString(), outdoorTempKey);
 				userStore.SetString(data.IndoorTemp.ToString(), indoorTempKey);
-				userStore.SetString($"{data.WindSpeed}mph {GetWindDir(data.WindDir)}", windSpeedKey);
+				userStore.SetString($"{data.WindSpeed}mph {data.WindCardinalDir}", windSpeedKey);
 				userStore.SetString(data.Humidity.ToString(), humidityKey);
-				userStore.SetString($"{data.UVIndex} {GetIndexRating(data.UVIndex)}", uvIndexKey);
+				userStore.SetString($"{data.UVIndex} {data.UVIndexRating}", uvIndexKey);
 
 				userStore.SetString(DateTime.UtcNow.ToString(), lastDeviceUpdateTimeKey);
 				userStore.SetBool(true, prevUpdateSuccessfulKey);
@@ -164,41 +164,5 @@ namespace AmbianceExt
             ForcastHighLabel.Text = $"↑ {forecastHigh}°";
             ForcastLowLabel.Text = $"↓ {forecastLow}°";
         }
-
-		string GetWindDir(int heading)
-		{
-			if ((heading >= 330 && heading <= 359) || (heading >= 0 && heading < 30))
-				return "N";
-			else if (heading >= 30 && heading < 60)
-				return "NE";
-			else if (heading >= 60 && heading < 120)
-				return "E";
-			else if (heading >= 120 && heading < 150)
-				return "SE";
-			else if (heading >= 150 && heading < 210)
-				return "S";
-			else if (heading >= 210 && heading < 240)
-				return "SW";
-			else if (heading >= 240 && heading < 300)
-				return "W";
-			else
-				return "Nw";
-		}
-
-		string GetIndexRating(int index)
-		{
-			if (index == 1 || index == 2)
-				return "Low";
-			else if (index >= 3 && index <= 5)
-				return "Moderate";
-			else if (index == 6 || index == 7)
-				return "High";
-			else if (index >= 8 && index <= 10)
-				return "Very High";
-			else if (index >= 11)
-				return "Extreme";
-			else
-				return "None";
-		}
 	}
 }
