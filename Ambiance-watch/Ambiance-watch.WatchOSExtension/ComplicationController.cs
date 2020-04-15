@@ -10,11 +10,21 @@ namespace Ambiance_watch.WatchOSExtension
     [Register("ComplicationController")]
     public class ComplicationController : CLKComplicationDataSource
     {
+        const string outdoorTempKey = "OutdoorTemp";
+        const string indoorTempKey = "IndoorTemp";
+        const string windSpeedKey = "WindSpeed";
+        const string humidityKey = "Humidity";
+        const string uvIndexKey = "UVIndex";
+        const string forecastHighKey = "ForecastHigh";
+        const string forecastLowKey = "ForecastLow";
+
+        NSUserDefaults userStore = NSUserDefaults.StandardUserDefaults;
+
         public ComplicationController()
         {
         }
 
-        public override void GetPlaceholderTemplate(CLKComplication complication, Action<CLKComplicationTemplate> handler)
+        public override void GetLocalizableSampleTemplate(CLKComplication complication, Action<CLKComplicationTemplate> handler)
         {
             if (complication.Family == CLKComplicationFamily.CircularSmall)
             {
@@ -29,14 +39,38 @@ namespace Ambiance_watch.WatchOSExtension
             if (complication.Family == CLKComplicationFamily.GraphicCircular)
             {
                 var template = new CLKComplicationTemplateGraphicCircularOpenGaugeRangeText();
-                template.CenterTextProvider = CLKSimpleTextProvider.FromText("69");
-                template.LeadingTextProvider = CLKSimpleTextProvider.FromText("60");
-                template.TrailingTextProvider = CLKSimpleTextProvider.FromText("420");
-                template.GaugeProvider = CLKSimpleGaugeProvider.Create(CLKGaugeProviderStyle.Ring, TemperatureColors.GetColorRange(48, 79), null, (float)0.8);
+                template.CenterTextProvider = CLKSimpleTextProvider.FromText("--");
+                template.LeadingTextProvider = CLKSimpleTextProvider.FromText("");
+                template.TrailingTextProvider = CLKSimpleTextProvider.FromText("");
+                template.GaugeProvider = CLKSimpleGaugeProvider.Create(CLKGaugeProviderStyle.Ring, TemperatureColors.GetColorRange(40, 90), null, (float)0.5);
                 Console.WriteLine("************* TEMPLATE!!!!!! **************");
                 handler(template);
             }
         }
+
+        //public override void GetPlaceholderTemplate(CLKComplication complication, Action<CLKComplicationTemplate> handler)
+        //{
+        //    if (complication.Family == CLKComplicationFamily.CircularSmall)
+        //    {
+        //        var template = new CLKComplicationTemplateCircularSmallSimpleImage();
+        //        //var template = new CLKComplicationTemplateCircularSmallRingText();
+        //        template.ImageProvider = CLKImageProvider.Create(UIImage.FromBundle("Image"));
+        //        //template.TextProvider = CLKSimpleTextProvider.FromText("69");
+        //        Console.WriteLine("************* TEMPLATE!!!!!! **************");
+        //        handler(template);
+        //    }
+
+        //    if (complication.Family == CLKComplicationFamily.GraphicCircular)
+        //    {
+        //        var template = new CLKComplicationTemplateGraphicCircularOpenGaugeRangeText();
+        //        template.CenterTextProvider = CLKSimpleTextProvider.FromText("--");
+        //        template.LeadingTextProvider = CLKSimpleTextProvider.FromText("");
+        //        template.TrailingTextProvider = CLKSimpleTextProvider.FromText("");
+        //        template.GaugeProvider = CLKSimpleGaugeProvider.Create(CLKGaugeProviderStyle.Ring, TemperatureColors.GetColorRange(40, 90), null, (float)0.5);
+        //        Console.WriteLine("************* TEMPLATE!!!!!! **************");
+        //        handler(template);
+        //    }
+        //}
 
         public override void GetCurrentTimelineEntry(CLKComplication complication, Action<CLKComplicationTimelineEntry> handler)
         {
@@ -54,18 +88,32 @@ namespace Ambiance_watch.WatchOSExtension
 
             if(complication.Family == CLKComplicationFamily.GraphicCircular)
             {
+                var outdoorTemp = userStore.StringForKey(outdoorTempKey);
+                var forecastHigh = userStore.StringForKey(forecastHighKey);
+                var forecastLow = userStore.StringForKey(forecastLowKey);
+
+                var highTemp = int.Parse(forecastHigh);
+                var lowTemp = int.Parse(forecastLow);
+                var outsideTemp = int.Parse(outdoorTemp);
+
                 var template = new CLKComplicationTemplateGraphicCircularOpenGaugeRangeText();
-                template.CenterTextProvider = CLKSimpleTextProvider.FromText("69");
-                template.LeadingTextProvider = CLKSimpleTextProvider.FromText("60");
-                template.TrailingTextProvider = CLKSimpleTextProvider.FromText("420");
-                template.GaugeProvider = CLKSimpleGaugeProvider.Create(CLKGaugeProviderStyle.Ring,TemperatureColors.GetColorRange(48,79), null, (float)0.8);
-                Console.WriteLine("************* TEMPLATE!!!!!! **************");
+                template.CenterTextProvider = CLKSimpleTextProvider.FromText(outdoorTemp);
+                template.LeadingTextProvider = CLKSimpleTextProvider.FromText(forecastLow);
+                template.TrailingTextProvider = CLKSimpleTextProvider.FromText(forecastHigh);
+
+                var guageFill = (float)(outsideTemp - lowTemp) / (highTemp - lowTemp);
+
+                template.GaugeProvider = CLKSimpleGaugeProvider.Create(
+                    CLKGaugeProviderStyle.Ring,
+                    TemperatureColors.GetColorRange(lowTemp, highTemp),
+                    null,
+                    guageFill
+                );
+                //template.GaugeProvider = CLKSimpleGaugeProvider.Create(CLKGaugeProviderStyle.Ring, TemperatureColors.GetColorRange(48, 79), null, (float)0.8);
+                Console.WriteLine("************* Complicate!!!!!! **************");
 
                 entry = CLKComplicationTimelineEntry.Create(NSDate.Now, template);
             }
-
-            Console.WriteLine("************* ENTRYY!!!!!! **************");
-
             handler(entry);
 
         }
