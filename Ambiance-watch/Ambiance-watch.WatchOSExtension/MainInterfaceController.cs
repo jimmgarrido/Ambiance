@@ -81,12 +81,19 @@ namespace Ambiance_watch.WatchOSExtension
             if (updatedData)
             {
                 UpdateWatchUI();
+                
 
                 if (CLKComplicationServer.SharedInstance.ActiveComplications.Length > 0)
                 {
                     CLKComplicationServer.SharedInstance.ReloadTimeline(CLKComplicationServer.SharedInstance.ActiveComplications[0]);
                 }
             }
+
+            WKExtension.SharedExtension.ScheduleBackgroundRefresh(NSDate.FromTimeIntervalSinceNow(10), null, (error) =>
+            {
+                if (error != null)
+                    Console.WriteLine(error);
+            });
         }
 
         partial void MyButtonPressed()

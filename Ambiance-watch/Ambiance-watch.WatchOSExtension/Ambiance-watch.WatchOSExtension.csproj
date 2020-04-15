@@ -29,6 +29,7 @@
     <MtouchArch>i386</MtouchArch>
     <DeviceSpecificBuild>false</DeviceSpecificBuild>
     <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>pdbonly</DebugType>

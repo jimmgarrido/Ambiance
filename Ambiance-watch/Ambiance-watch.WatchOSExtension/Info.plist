@@ -35,5 +35,7 @@
 		<string>CLKComplicationFamilyCircularSmall</string>
 		<string>CLKComplicationFamilyGraphicCircular</string>
 	</array>
+	<key>WKExtensionDelegateClassName</key>
+	<string>ExtensionDelegate</string>
 </dict>
 </plist>
