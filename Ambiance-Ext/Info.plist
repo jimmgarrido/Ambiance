@@ -5,7 +5,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Weather @ Home</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.companyname.Ambiance.Ambiance-Ext</string>
+	<string>com.jimmgarr.ambiance.ambiance-ext</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleInfoDictionaryVersion</key>

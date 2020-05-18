@@ -5,7 +5,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Ambiance</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.companyname.Ambiance</string>
+	<string>com.jimmgarr.ambiance</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
