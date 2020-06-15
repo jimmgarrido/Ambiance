@@ -106,9 +106,9 @@ namespace AmbianceExt
         {
 			var deviceData = await amClient.GetDeviceDataAsync();
 
-			if (deviceData.Count > 0)
+			if (deviceData != null)
 			{
-				var data = deviceData[0].LastData;
+				var data = deviceData.Devices[0]?.LastData;
 
 				userStore.SetString(data.OutdoorTemp.ToString(), outdoorTempKey);
 				userStore.SetString(data.IndoorTemp.ToString(), indoorTempKey);

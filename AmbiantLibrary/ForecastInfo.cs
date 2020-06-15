@@ -1,10 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace AmbiantLibrary
 {
 	public class ForecastInfo
 	{
+		[JsonProperty("data")]
+		public Forecast Forecast { get; set; }
+
+		public long Updated { get; set; }
+	}
+
+	public class Forecast
+    {
 		public float Latitude { get; set; }
 
 		public float Longitude { get; set; }
@@ -14,7 +23,6 @@ namespace AmbiantLibrary
 		public DataPoint Currently { get; set; }
 
 		public DataBlock Daily { get; set; }
-
 	}
 
 	public class DataPoint

@@ -15,13 +15,13 @@ namespace AmbiantLibrary
 			_client = new HttpClient();
 		}
 
-		public async Task<List<WeatherDevice>> GetDeviceDataAsync()
+		public async Task<DeviceDataResponse> GetDeviceDataAsync()
 		{
 			try
 			{
-				var json = await _client.GetStringAsync("https://api.ambientweather.net/v1/devices?applicationKey=ac5b0e1a59374538b2618a6ebcd1479ac71c7b34c69b4ea29ed3cbab29a57a67&apiKey=96ad32e3abe24089b1f509eae38fabf1c633e693816947d187521d3eae9b368a");
+				var json = await _client.GetStringAsync("http://ambiserve.underdeveloper.com/api/");
 
-				var lastDataJson = JsonConvert.DeserializeObject<List<WeatherDevice>>(json);
+				var lastDataJson = JsonConvert.DeserializeObject<DeviceDataResponse>(json);
 
 				return lastDataJson;
 			}
@@ -30,7 +30,7 @@ namespace AmbiantLibrary
 				Console.WriteLine(e.Message);
             }
 
-			return new List<WeatherDevice>();
+			return null;
 		}
 
 		public async Task<ForecastInfo> GetForecastDataAsync()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -91,5 +92,15 @@ namespace AmbiantLibrary
             else
                 return "None";
         }
+    }
+
+    public class DeviceDataResponse
+    {
+        [JsonProperty("weatherData")]
+        public List<WeatherDevice> Devices { get; set; }
+
+
+        public ForecastInfo ForecastInfo { get; set; }
+        
     }
 }
