@@ -42,7 +42,7 @@ namespace Ambiance_watch.WatchOSExtension
                 template.CenterTextProvider = CLKSimpleTextProvider.FromText("--");
                 template.LeadingTextProvider = CLKSimpleTextProvider.FromText("");
                 template.TrailingTextProvider = CLKSimpleTextProvider.FromText("");
-                template.GaugeProvider = CLKSimpleGaugeProvider.Create(CLKGaugeProviderStyle.Ring, TemperatureColors.GetColorRange(40, 90), null, (float)0.5);
+                template.GaugeProvider = CLKSimpleGaugeProvider.Create(CLKGaugeProviderStyle.Ring, TemperatureColors.GetColorForTempRange(40, 90), null, (float)0.5);
                 Console.WriteLine("************* TEMPLATE!!!!!! **************");
                 handler(template);
             }
@@ -86,7 +86,7 @@ namespace Ambiance_watch.WatchOSExtension
                 entry = CLKComplicationTimelineEntry.Create(NSDate.Now, template);
             }
 
-            if(complication.Family == CLKComplicationFamily.GraphicCircular)
+            if (complication.Family == CLKComplicationFamily.GraphicCircular)
             {
                 var outdoorTemp = userStore.StringForKey(outdoorTempKey);
                 var forecastHigh = userStore.StringForKey(forecastHighKey);
@@ -98,14 +98,23 @@ namespace Ambiance_watch.WatchOSExtension
 
                 var template = new CLKComplicationTemplateGraphicCircularOpenGaugeRangeText();
                 template.CenterTextProvider = CLKSimpleTextProvider.FromText(outdoorTemp);
+
                 template.LeadingTextProvider = CLKSimpleTextProvider.FromText(forecastLow);
+                template.LeadingTextProvider.TintColor = TemperatureColors.GetColorForTemp(lowTemp);
+
                 template.TrailingTextProvider = CLKSimpleTextProvider.FromText(forecastHigh);
+                template.TrailingTextProvider.TintColor = TemperatureColors.GetColorForTemp(highTemp);
 
                 var guageFill = (float)(outsideTemp - lowTemp) / (highTemp - lowTemp);
 
+                if (guageFill > 1.0f)
+                    guageFill = 1.0f;
+                else if (guageFill < 0.0f)
+                    guageFill = 0.0f;
+
                 template.GaugeProvider = CLKSimpleGaugeProvider.Create(
                     CLKGaugeProviderStyle.Ring,
-                    TemperatureColors.GetColorRange(lowTemp, highTemp),
+                    TemperatureColors.GetColorForTempRange(lowTemp, highTemp),
                     null,
                     guageFill
                 );
@@ -132,8 +141,8 @@ namespace Ambiance_watch.WatchOSExtension
         static UIColor temp20 = UIColor.FromRGB(0, 165, 255);
         static UIColor temp30 = UIColor.FromRGB(2, 225, 251);
         static UIColor temp40 = UIColor.FromRGB(66, 251, 123);
-        static UIColor temp50 = UIColor.FromRGB(187, 251, 2);
-        static UIColor temp60 = UIColor.FromRGB(251, 225, 2);
+        static UIColor temp50 = UIColor.FromRGB(145, 251, 2);
+        static UIColor temp60 = UIColor.FromRGB(251, 246, 2);
         static UIColor temp70 = UIColor.FromRGB(255, 178, 0);
         static UIColor temp80 = UIColor.FromRGB(255, 116, 0);
         static UIColor temp90 = UIColor.FromRGB(209, 41, 1);
@@ -142,7 +151,7 @@ namespace Ambiance_watch.WatchOSExtension
 
         static UIColor[] colors = new UIColor[] { tempMinus20, tempMinus10, temp0, temp10, temp20, temp30, temp40, temp50, temp60, temp70, temp80, temp90, temp100, temp110 };
 
-        public static UIColor[] GetColorRange(int minTemp, int maxTemp)
+        public static UIColor[] GetColorForTempRange(int minTemp, int maxTemp)
         {
             int minColorIndex = (minTemp / 10) + 2;
             int maxColorIndex = (maxTemp / 10) + 2;
@@ -154,6 +163,12 @@ namespace Ambiance_watch.WatchOSExtension
                 gaugeColors[i] = colors[minColorIndex + i];
 
             return gaugeColors;
+        }
+
+        public static UIColor GetColorForTemp(int temp)
+        {
+            int colorIndex = (temp / 10) + 2;
+            return colors[colorIndex];
         }
     }
 }
